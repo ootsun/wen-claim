@@ -1,6 +1,6 @@
 function Header() {
   return (
-    <header className="h-32 flex items-center justify-center">
+    <header className="h-12 flex items-center justify-center">
       <h1 className="text-center text-5xl font-cursive">
         <span className="text-gray-700 m-1">Wen claim</span>
         <span className="text-amber-500">?</span>

@@ -6,7 +6,7 @@ module.exports = {
   theme: {
     extend: {
       lineHeight: {
-        'extra-loose': '2.5',
+        'extra-loose': '3.5',
       }
     },
     fontFamily: {

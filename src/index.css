@@ -4,21 +4,34 @@
 
 @layer components {
     .input {
-        @apply h-8 w-24 p-0.5 font-bold bg-gray-100 border border-gray-300 rounded-lg focus:ring-1 focus:ring-sky-500 focus:border-sky-500 focus:outline-none;
-    }
-
-    .pink-underline {
-        @apply inline-block border-b-2 border-b-pink-500 h-12;
+        @apply h-7 w-28 p-0.5 font-bold bg-gray-100 border border-amber-500 rounded-lg focus:ring-1 focus:ring-sky-500 focus:border-sky-500 focus:outline-none;
     }
 
     .result {
-        @apply inline-block border-b-2 border-b-amber-500 h-10 font-bold;
+        @apply inline-block border-b-2 border-b-pink-500 h-12 font-bold;
     }
 
     .compute-button {
         @apply text-white font-bold text-center flex items-center
-        bg-sky-500 shadow-lg shadow-sky-500/40 hover:bg-sky-600 hover:shadow-sky-600/40
-        rounded-lg px-5 py-2.5 my-12
+        bg-sky-500 shadow-lg shadow-sky-500/40
+        hover:bg-sky-600 hover:shadow-sky-600/40
+        disabled:bg-sky-400 disabled:shadow-none
+        rounded-lg px-5 py-2.5 m-10
+    }
+
+    .error-message {
+        @apply text-red-500 text-sm
     }
 }
 
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}

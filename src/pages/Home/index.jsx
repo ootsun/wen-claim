@@ -32,7 +32,6 @@ function Home() {
   }
 
   function controlAndRound(maxIncome) {
-    console.log(maxIncome)
     if(maxIncome >= 1000000000) {
       return 'shit ton of 💰💰💰';
     }

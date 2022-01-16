@@ -41,7 +41,7 @@ function computeTheOptimalFrequency(amount, apr, cost) {
   if (newMaxResult >= 1000000000) {
     newMaxResult = 1000000000;
   }
-  console.log('a = ' + a, 'b = ' + b, 'maxFrequency = ' + maxFrequency, 'maxResult = ' + maxResult, 'newMaxResult = ' + newMaxResult, 'nbComputations = ' + nbComputations);
+  // console.log('a = ' + a, 'b = ' + b, 'maxFrequency = ' + maxFrequency, 'maxResult = ' + maxResult, 'newMaxResult = ' + newMaxResult, 'nbComputations = ' + nbComputations);
   return {maxIncome: newMaxResult, optimalFrequency: maxFrequency};
 }
 

@@ -7,7 +7,7 @@ function Header() {
         <span className="text-sky-500 rotate-[11deg] inline-block m-0.5">?</span>
         <span className="text-pink-500 rotate-[22deg] inline-block m-0.5">!</span></h1>
     </header>
-  )
+  );
 }
 
 export default Header;

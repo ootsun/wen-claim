@@ -4,13 +4,9 @@ module.exports = {
     './src/**/*.{js,jsx,ts,tsx}',
   ],
   theme: {
-    extend: {
-      lineHeight: {
-        'extra-loose': '3.5',
-      }
-    },
     fontFamily: {
-      'cursive': ['Lobster']
+      'cursive': ['Lobster'],
+      'sans-serif': ['Lato']
     }
   },
   plugins: [],

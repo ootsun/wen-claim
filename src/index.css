@@ -4,11 +4,11 @@
 
 @layer components {
     .input {
-        @apply h-7 w-28 p-0.5 font-bold bg-gray-100 border border-amber-500 rounded-lg focus:ring-1 focus:ring-sky-500 focus:border-sky-500 focus:outline-none;
+        @apply h-7 w-20 p-0.5 font-bold bg-gray-100 border border-amber-500 rounded-lg focus:ring-1 focus:ring-sky-500 focus:border-sky-500 focus:outline-none;
     }
 
     .result {
-        @apply inline-block border-b-2 border-b-pink-500 h-12 font-bold;
+        @apply inline-block border-b-2 border-b-pink-500 h-8 font-bold;
     }
 
     .compute-button {
@@ -16,7 +16,7 @@
         bg-sky-500 shadow-lg shadow-sky-500/40
         hover:bg-sky-600 hover:shadow-sky-600/40
         disabled:bg-sky-400 disabled:shadow-none
-        rounded-lg px-5 py-2.5 m-10
+        rounded-lg px-5 py-2.5 m-5
     }
 
     .error-message {
@@ -34,4 +34,8 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
     -moz-appearance: textfield;
+}
+
+body {
+    min-height: calc(100vh - theme('margin.5'));
 }

@@ -81,13 +81,13 @@ function Home() {
           <p>
             <span className="mr-1">I depose</span>
             $
-            <span className="inline-flex flex-col">
+            <span className="inline-flex">
               <input type="number" className="input" step={0.01}
                      {...register('amount', {required: 'Mandatory field'})} defaultValue={10000}/>
               {formState.errors.amount && <span className="error-message">{formState.errors.amount.message}</span>}
             </span>
             <span className="mx-1">and I expect a</span>
-            <span className="inline-flex flex-col">
+            <span className="inline-flex">
               <input type="number" className="input" step={0.01}
                      {...register('apr', {required: 'Mandatory field'})} defaultValue={30}/>
               {formState.errors.apr && <span className="error-message">{formState.errors.apr.message}</span>}
@@ -96,7 +96,7 @@ function Home() {
           </p>
           <p>
             <span className="mr-1">Claim and compound rewards cost me</span>
-            $<span className="inline-flex flex-col">
+            $<span className="inline-flex">
               <input type="number" className="input" step={0.01}
                      {...register('cost', {required: 'Mandatory field'})} defaultValue={2}/>
             {formState.errors.cost && <span className="error-message">{formState.errors.cost.message}</span>}

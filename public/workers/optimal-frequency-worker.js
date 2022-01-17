@@ -1,15 +1,21 @@
 onmessage = function (e) {
-  // the passed-in data is available via e.data
-
   postMessage(computeTheOptimalFrequency(e.data.amount, e.data.apr, e.data.cost))
 };
 
 function computeTheOptimalFrequency(amount, apr, cost) {
   // 8760 == number of hours in 1 year
-  const maxValue = 8760;
+  const maxValue = 365 * 24;
+
+  // Don't waste time computing something unrealistic
+  const maxResultLimit = 1000000000;
+  const maxNbComputations = 10000000;
+
+  // Define the two starting point
   let a = maxValue / 4;
   let b = a * 3;
 
+  // This function returns the value of a position (amount + yearly earnings) after 1 year
+  // where x is the yearly frequency of harvests
   const fx = (x) => amount * (Math.pow(1 + apr / x, x) - 1) - (x * cost);
 
   let maxResult;
@@ -36,10 +42,10 @@ function computeTheOptimalFrequency(amount, apr, cost) {
       b = maxFrequency + step <= maxValue ? maxFrequency + step : maxValue;
     }
 
-  } while ((newMaxResult <= 0 || getPreciseRound(maxResult) < getPreciseRound(newMaxResult)) && nbComputations < 10000000);
+  } while ((newMaxResult <= 0 || getPreciseRound(maxResult) < getPreciseRound(newMaxResult)) && nbComputations < maxNbComputations);
 
-  if (newMaxResult >= 1000000000) {
-    newMaxResult = 1000000000;
+  if (newMaxResult >= maxResultLimit) {
+    newMaxResult = maxResultLimit;
   }
   // console.log('a = ' + a, 'b = ' + b, 'maxFrequency = ' + maxFrequency, 'maxResult = ' + maxResult, 'newMaxResult = ' + newMaxResult, 'nbComputations = ' + nbComputations);
   return {maxIncome: newMaxResult, optimalFrequency: maxFrequency};

@@ -1,8 +1,12 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Wen claim??!",
+  "name": "Wen claim??!",
   "icons": [
-
+    {
+      "src": "favicon.png",
+      "type": "image/png",
+      "sizes": "96x96"
+    }
   ],
   "start_url": ".",
   "display": "standalone",

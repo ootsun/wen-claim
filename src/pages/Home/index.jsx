@@ -77,7 +77,7 @@ function Home() {
   return (
     <div className="flex items-center flex-col mt-5">
       <form className="flex items-center flex-col" onSubmit={handleSubmit(onSubmit)}>
-        <div className="w-max bg-white rounded-xl shadow-lg p-6 text-center leading-loose text-lg">
+        <div className="card">
           <p>
             <span className="mr-1">I depose</span>
             $
@@ -114,7 +114,7 @@ function Home() {
           Compute
         </button>
       </form>
-      <div className="bg-white rounded-xl shadow-lg p-6 text-center leading-loose text-lg">
+      <div className="card">
         {!isError && <p>
           <span className="mr-1">The optimal frequency for claiming rewards is</span>
           <span className="result">{optimalFrequency}</span>

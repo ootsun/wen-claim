@@ -4,23 +4,40 @@
 
 @layer components {
     .input {
-        @apply h-7 w-20 p-0.5 font-bold bg-gray-100 border border-amber-500 rounded-lg focus:ring-1 focus:ring-sky-500 focus:border-sky-500 focus:outline-none;
+        @apply h-7 w-28 p-0.5 z-10
+        border border-amber-500 rounded-lg focus:ring-1 focus:ring-sky-500 focus:border-sky-500 focus:outline-none
+        bg-gray-100
+        dark:bg-gray-900;
     }
 
     .result {
-        @apply inline-block border-b-2 border-b-pink-500 h-8 font-bold;
+        @apply inline-block border-b-2 border-b-pink-500 h-10 font-bold
+        dark:font-medium;
     }
 
     .compute-button {
-        @apply text-white font-bold text-center flex items-center
-        bg-sky-500 shadow-lg shadow-sky-500/40
-        hover:bg-sky-600 hover:shadow-sky-600/40
-        disabled:bg-sky-400 disabled:shadow-none
+        @apply text-lg text-center flex items-center
+        text-white shadow-lg shadow-sky-500/40 bg-sky-500
+        dark:shadow-none dark:bg-sky-600
+        hover:bg-sky-600 hover:shadow-sky-600/40 hover:dark:bg-sky-700
+        disabled:bg-sky-400 disabled:shadow-none disabled:dark:bg-sky-500
         rounded-lg px-5 py-2.5 m-5
     }
 
     .error-message {
-        @apply text-red-500 text-sm
+        @apply text-red-500 text-sm absolute pt-7
+    }
+
+    .body {
+        @apply mx-10 mt-5 flex justify-center font-sans-serif
+        bg-gray-100 text-gray-800
+        dark:bg-gray-900 dark:text-gray-100
+    }
+
+    .card {
+        @apply w-max text-center leading-extra-loose text-lg rounded-xl shadow-lg p-6
+        bg-white
+        dark:bg-gray-800
     }
 }
 

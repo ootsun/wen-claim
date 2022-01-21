@@ -1,6 +1,7 @@
 import {useForm} from 'react-hook-form';
 import {useState} from 'react';
 import Duration from 'duration';
+import { v4 as uuidv4 } from 'uuid';
 
 function Home() {
 
@@ -10,6 +11,7 @@ function Home() {
   let [optimalFrequency, setOptimalFrequency] = useState(translateInEnglish(17.2));
   let [maxIncome, setMaxIncome] = useState(3429.32);
   let [isError, setIsError] = useState(false);
+  let sessionId;
 
   const onSubmit = data => {
     setIsComputing(true);
@@ -29,6 +31,18 @@ function Home() {
       }
     };
     worker.postMessage({amount, apr, cost});
+    fetch(process.env.REACT_APP_METRIC_API_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        sessionId: getSessionId(),
+        amount: amount,
+        apr: apr,
+        cost: cost
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8"
+      }
+    })
   }
 
   function controlAndRound(maxIncome) {
@@ -72,6 +86,13 @@ function Home() {
       }
     }
     return str;
+  }
+
+  function getSessionId() {
+    if(!sessionId) {
+      sessionId = uuidv4();
+    }
+    return sessionId;
   }
 
   return (

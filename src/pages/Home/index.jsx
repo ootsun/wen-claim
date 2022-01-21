@@ -1,7 +1,7 @@
 import {useForm} from 'react-hook-form';
 import {useState} from 'react';
 import Duration from 'duration';
-import { v4 as uuidv4 } from 'uuid';
+import {v4 as uuidv4} from 'uuid';
 
 function Home() {
 
@@ -12,6 +12,7 @@ function Home() {
   let [maxIncome, setMaxIncome] = useState(3429.32);
   let [isError, setIsError] = useState(false);
   let [sessionId] = useState(uuidv4());
+  let [prevMetric, setPrevMetric] = useState(null);
 
   const onSubmit = data => {
     setIsComputing(true);
@@ -22,7 +23,7 @@ function Home() {
     const worker = new Worker('./workers/optimal-frequency-worker.js');
     worker.onmessage = function (event) {
       setIsComputing(false);
-      if(!event.data.maxIncome || !event.data.optimalFrequency) {
+      if (!event.data.maxIncome || !event.data.optimalFrequency) {
         setIsError(true);
       } else {
         setIsError(false);
@@ -31,22 +32,31 @@ function Home() {
       }
     };
     worker.postMessage({amount, apr, cost});
+    sendMetric(amount, apr, cost);
+  }
+
+  function sendMetric(amount, apr, cost) {
+    // Avoid sending metric if no data has changed
+    if (prevMetric && prevMetric.amount === amount && prevMetric.apr === apr && prevMetric.cost === cost) {
+      return;
+    }
     fetch(process.env.REACT_APP_METRIC_API_URL, {
-      method: "POST",
+      method: 'POST',
       body: JSON.stringify({
-        sessionId: sessionId,
-        amount: amount,
-        apr: apr,
-        cost: cost
+        sessionId,
+        amount,
+        apr,
+        cost
       }),
       headers: {
-        "Content-type": "application/json; charset=UTF-8"
+        'Content-type': 'application/json; charset=UTF-8'
       }
-    })
+    });
+    setPrevMetric({amount, apr, cost});
   }
 
   function controlAndRound(maxIncome) {
-    if(maxIncome >= 1000000000) {
+    if (maxIncome >= 1000000000) {
       return 'shit ton of 💰💰💰';
     }
     return Math.round(maxIncome * 100) / 100;
@@ -77,11 +87,10 @@ function Home() {
       }
       str += duration.day + ' day(s)';
     }
-    if(!str) {
+    if (!str) {
       if (duration.hour > 0) {
         str = duration.hour + ' hour(s)';
-      }
-      else {
+      } else {
         str = '1 hour';
       }
     }
@@ -136,7 +145,8 @@ function Home() {
           <span className="result">${maxIncome}</span>
           <span className="ml-1">per year.</span>
         </p>}
-        {isError && <p className="result">The numbers you passed doesn't seem realistic. Please, correct the information.</p>}
+        {isError &&
+          <p className="result">The numbers you passed doesn't seem realistic. Please, correct the information.</p>}
       </div>
     </div>);
 }

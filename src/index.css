@@ -29,13 +29,13 @@
     }
 
     .body {
-        @apply mx-10 mt-5 flex justify-center font-sans-serif
+        @apply mx-5 mt-3 lg:mx-10 lg:mt-5 flex justify-center font-sans-serif
         bg-gray-100 text-gray-800
         dark:bg-gray-900 dark:text-gray-100
     }
 
     .card {
-        @apply w-max text-center leading-extra-loose text-lg rounded-xl shadow-lg p-6
+        @apply text-center leading-extra-loose text-lg rounded-xl shadow-lg p-3 lg:p-6
         bg-white
         dark:bg-gray-800
     }

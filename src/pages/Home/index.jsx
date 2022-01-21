@@ -11,7 +11,7 @@ function Home() {
   let [optimalFrequency, setOptimalFrequency] = useState(translateInEnglish(17.2));
   let [maxIncome, setMaxIncome] = useState(3429.32);
   let [isError, setIsError] = useState(false);
-  let sessionId;
+  let [sessionId] = useState(uuidv4());
 
   const onSubmit = data => {
     setIsComputing(true);
@@ -34,7 +34,7 @@ function Home() {
     fetch(process.env.REACT_APP_METRIC_API_URL, {
       method: "POST",
       body: JSON.stringify({
-        sessionId: getSessionId(),
+        sessionId: sessionId,
         amount: amount,
         apr: apr,
         cost: cost
@@ -86,13 +86,6 @@ function Home() {
       }
     }
     return str;
-  }
-
-  function getSessionId() {
-    if(!sessionId) {
-      sessionId = uuidv4();
-    }
-    return sessionId;
   }
 
   return (

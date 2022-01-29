@@ -10,6 +10,8 @@ function Home() {
   let [isComputing, setIsComputing] = useState(false);
   let [optimalFrequency, setOptimalFrequency] = useState(translateInEnglish(17.2));
   let [maxIncome, setMaxIncome] = useState(3429.32);
+  let [incomeWithoutCompound, setIncomeWithoutCompound] = useState(3000);
+  let [difference, setDifference] = useState(429.32);
   let [isError, setIsError] = useState(false);
   let [sessionId] = useState(uuidv4());
   let [prevMetric, setPrevMetric] = useState(null);
@@ -29,6 +31,8 @@ function Home() {
         setIsError(false);
         setMaxIncome(controlAndRound(event.data.maxIncome));
         setOptimalFrequency(translateInEnglish(event.data.optimalFrequency));
+        setIncomeWithoutCompound(controlAndRound(amount * apr));
+        setDifference(controlAndRound(event.data.maxIncome - (amount * apr)));
       }
     };
     worker.postMessage({amount, apr, cost});
@@ -55,11 +59,11 @@ function Home() {
     setPrevMetric({amount, apr, cost});
   }
 
-  function controlAndRound(maxIncome) {
-    if (maxIncome >= 1000000000) {
+  function controlAndRound(number) {
+    if (number >= 1000000000) {
       return 'shit ton of 💰💰💰';
     }
-    return Math.round(maxIncome * 100) / 100;
+    return Math.round(number * 100) / 100;
   }
 
   function translateInEnglish(frequency) {
@@ -143,7 +147,11 @@ function Home() {
           <span className="result">{optimalFrequency}</span>
           <span className="mx-1">and it will make me earn</span>
           <span className="result">${maxIncome}</span>
-          <span className="ml-1">per year.</span>
+          <span className="ml-1">per year.<br/></span>
+          <span className="mr-1">Without compounding, it will make me earn</span>
+          <span className="result">${incomeWithoutCompound}</span>
+          <span className="mx-1">per year. This represents a difference of</span>
+          <span className="result">${difference}.</span>
         </p>}
         {isError &&
           <p className="result">The numbers you passed doesn't seem realistic. Please, correct the information.</p>}

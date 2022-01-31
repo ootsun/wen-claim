@@ -17,10 +17,11 @@ function Home() {
   let [prevMetric, setPrevMetric] = useState(null);
 
   const onSubmit = data => {
+    console.log(data)
     setIsComputing(true);
-    const amount = parseInt(data.amount);
-    const apr = parseInt(data.apr) / 100;
-    const cost = parseInt(data.cost);
+    const amount = parseFloat(data.amount);
+    const apr = parseFloat(data.apr) / 100;
+    const cost = parseFloat(data.cost);
 
     const worker = new Worker('./workers/optimal-frequency-worker.js');
     worker.onmessage = function (event) {

@@ -143,14 +143,14 @@ function Home() {
       </form>
       <div className="card">
         {!isError && <p>
-          <span className="mr-1">The optimal frequency for claiming rewards is</span>
+          The optimal frequency for claiming rewards is&nbsp;
           <span className="result">{optimalFrequency}</span>
-          <span className="mx-1">and it will make me earn</span>
+          &nbsp;and it will make me earn&nbsp;
           <span className="result">${maxIncome}</span>
-          <span className="ml-1">per year.<br/></span>
-          <span className="mr-1">Without compounding, it will make me earn</span>
+          &nbsp;per year.<br/>&nbsp;
+          Without compounding, it will make me earn&nbsp;
           <span className="result">${incomeWithoutCompound}</span>
-          <span className="mx-1">per year. This represents a difference of</span>
+          &nbsp;per year. This represents a difference of&nbsp;
           <span className="result">${difference}.</span>
         </p>}
         {isError &&

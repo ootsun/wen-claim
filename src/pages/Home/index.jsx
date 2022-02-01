@@ -1,27 +1,40 @@
-import {useForm} from 'react-hook-form';
 import {useState} from 'react';
-import Duration from 'duration';
+import humanizeDuration from 'humanize-duration';
 import {v4 as uuidv4} from 'uuid';
+import {SwitchForm} from '../../components/SwitchForm';
+import {Form} from '../../components/Form';
+import {Result} from '../../components/Result';
+import formatThousands from 'format-thousands';
 
 function Home() {
-
-  const {register, handleSubmit, formState} = useForm();
-  let {isValid} = formState;
+  const HOURS_IN_YEAR = 365 * 24;
+  const MAX_RESULT_LIMIT = 1000000000;
   let [isComputing, setIsComputing] = useState(false);
-  let [optimalFrequency, setOptimalFrequency] = useState(translateInEnglish(17.2));
+  let [optimalFrequency, setOptimalFrequency] = useState(translateInEnglish(HOURS_IN_YEAR, 17));
   let [maxIncome, setMaxIncome] = useState(3429.32);
-  let [incomeWithoutCompound, setIncomeWithoutCompound] = useState(3000);
-  let [difference, setDifference] = useState(429.32);
+  let [incomeWithoutCompound, setIncomeWithoutCompound] = useState(null);
+  let [difference, setDifference] = useState(null);
   let [isError, setIsError] = useState(false);
   let [sessionId] = useState(uuidv4());
   let [prevMetric, setPrevMetric] = useState(null);
+  let [isBasic, setIsBasic] = useState(true);
 
-  const onSubmit = data => {
-    console.log(data)
+  const onSubmit = formData => {
     setIsComputing(true);
-    const amount = parseFloat(data.amount);
-    const apr = parseFloat(data.apr) / 100;
-    const cost = parseFloat(data.cost);
+    const amount = parseFloat(formData.amount);
+    const apr = parseFloat(formData.apr) / 100;
+    let cost;
+    let timeHorizonInHours;
+
+    if (isBasic) {
+      cost = parseFloat(formData.cost);
+      timeHorizonInHours = HOURS_IN_YEAR;
+    } else {
+      cost = parseFloat(formData.claimCost) + parseFloat(formData.compoundCost);
+      timeHorizonInHours = (HOURS_IN_YEAR * formData.years) + (7 * 24 * formData.weeks) + (24 * formData.days);
+    }
+    // (ppr = periodic percentage rate) =/= (apr = annual percentage rate)
+    const ppr = apr * timeHorizonInHours / HOURS_IN_YEAR;
 
     const worker = new Worker('./workers/optimal-frequency-worker.js');
     worker.onmessage = function (event) {
@@ -30,14 +43,45 @@ function Home() {
         setIsError(true);
       } else {
         setIsError(false);
-        setMaxIncome(controlAndRound(event.data.maxIncome));
-        setOptimalFrequency(translateInEnglish(event.data.optimalFrequency));
-        setIncomeWithoutCompound(controlAndRound(amount * apr));
-        setDifference(controlAndRound(event.data.maxIncome - (amount * apr)));
+        setMaxIncome(null);
+        setOptimalFrequency(null);
+        setIncomeWithoutCompound(null);
+        setDifference(null);
+        if (isBasic) {
+          setMaxIncome(controlAndRound(event.data.maxIncome));
+          setOptimalFrequency(translateInEnglish(HOURS_IN_YEAR, event.data.optimalFrequency));
+        } else {
+          const maxIncomeAfterClaim = event.data.maxIncome - formData.claimCost;
+          const incomeWithoutCompound = amount * ppr - formData.claimCost;
+          if (userDoesntLoseMoney(maxIncomeAfterClaim, incomeWithoutCompound)) {
+            if (userEarnMoreWithoutCompound(incomeWithoutCompound, maxIncomeAfterClaim, formData.claimCost)) {
+              //If user shouldn't compound
+              setMaxIncome(controlAndRound(event.data.maxIncome));
+            } else {
+              setMaxIncome(controlAndRound(maxIncomeAfterClaim));
+              setOptimalFrequency(translateInEnglish(timeHorizonInHours, event.data.optimalFrequency));
+              setIncomeWithoutCompound(controlAndRound(incomeWithoutCompound));
+              setDifference(controlAndRound(maxIncomeAfterClaim - incomeWithoutCompound));
+            }
+          }
+        }
       }
     };
-    worker.postMessage({amount, apr, cost});
+    if(timeHorizonInHours <= 0 || amount <= 0 || ppr <= 0) {
+      setIsError(true);
+      setIsComputing(false);
+    } else {
+      worker.postMessage({amount, ppr, cost, timeHorizonInHours});
+    }
     sendMetric(amount, apr, cost);
+  }
+
+  function userEarnMoreWithoutCompound(incomeWithoutCompound, maxIncomeAfterClaim, claimCost) {
+    return incomeWithoutCompound > maxIncomeAfterClaim && maxIncomeAfterClaim < MAX_RESULT_LIMIT - claimCost;
+  }
+
+  function userDoesntLoseMoney(maxIncomeAfterClaim, incomeWithoutCompound) {
+    return Math.max(maxIncomeAfterClaim, incomeWithoutCompound) > 0;
   }
 
   function sendMetric(amount, apr, cost) {
@@ -47,116 +91,47 @@ function Home() {
     }
     fetch(process.env.REACT_APP_METRIC_API_URL, {
       method: 'POST',
-      body: JSON.stringify({
-        sessionId,
-        amount,
-        apr,
-        cost
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8'
-      }
+      body: JSON.stringify({sessionId, amount, apr, cost}),
+      headers: {'Content-type': 'application/json; charset=UTF-8'}
     });
     setPrevMetric({amount, apr, cost});
   }
 
   function controlAndRound(number) {
-    if (number >= 1000000000) {
+    if (number >= MAX_RESULT_LIMIT) {
       return 'shit ton of 💰💰💰';
     }
-    return Math.round(number * 100) / 100;
+    const result = Math.round(number * 100) / 100;
+    const rest = Math.round((result % 1) * 100) / 100
+    if(rest < 1 && rest >= 0.1) {
+      return formatThousands(result) + '0';
+    }
+    return formatThousands(result)
   }
 
-  function translateInEnglish(frequency) {
-    const hoursInAYear = 365 * 24;
-    const hoursUntilFirstClaim = hoursInAYear / frequency;
+  function translateInEnglish(period, frequency) {
+    const hoursUntilFirstClaim = Math.ceil(period / frequency);
 
-    const firstClaim = new Date();
-    firstClaim.setHours(firstClaim.getHours() + hoursUntilFirstClaim);
-
-    const duration = new Duration(new Date(), firstClaim);
-
-    let str = '';
-    if (duration.year > 0) {
-      str += duration.year + ' year(s)';
-    }
-    if (duration.month > 0) {
-      if (str) {
-        str += ' ';
-      }
-      str += duration.month + ' month(s)';
-    }
-    if (duration.day > 0) {
-      if (str) {
-        str += ' ';
-      }
-      str += duration.day + ' day(s)';
-    }
-    if (!str) {
-      if (duration.hour > 0) {
-        str = duration.hour + ' hour(s)';
-      } else {
-        str = '1 hour';
-      }
-    }
-    return str;
+    return humanizeDuration(hoursUntilFirstClaim, {
+      units: ['y', 'w', 'd', 'h'],
+      round: true,
+      conjunction: ' and ',
+      serialComma: false,
+      unitMeasures: {
+        y: 365 * 24,
+        w: 7 * 24,
+        d: 24,
+        h: 1
+      },
+    });
   }
 
   return (
     <div className="flex items-center flex-col mt-5">
-      <form className="flex items-center flex-col" onSubmit={handleSubmit(onSubmit)}>
-        <div className="card">
-          <p>
-            <span className="mr-1">I depose</span>
-            $
-            <span className="inline-flex">
-              <input type="number" className="input" step={0.01}
-                     {...register('amount', {required: 'Mandatory field'})} defaultValue={10000}/>
-              {formState.errors.amount && <span className="error-message">{formState.errors.amount.message}</span>}
-            </span>
-            <span className="mx-1">and I expect a</span>
-            <span className="inline-flex">
-              <input type="number" className="input" step={0.01}
-                     {...register('apr', {required: 'Mandatory field'})} defaultValue={30}/>
-              {formState.errors.apr && <span className="error-message">{formState.errors.apr.message}</span>}
-            </span>%
-            <span className="ml-1">APR.</span>
-          </p>
-          <p>
-            <span className="mr-1">Claim and compound rewards cost me</span>
-            $<span className="inline-flex">
-              <input type="number" className="input" step={0.01}
-                     {...register('cost', {required: 'Mandatory field'})} defaultValue={2}/>
-            {formState.errors.cost && <span className="error-message">{formState.errors.cost.message}</span>}
-            </span>
-          </p>
-        </div>
-        <button type="submit" disabled={!isValid || isComputing} className="compute-button">
-          {isComputing &&
-            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
-                 viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>}
-          Compute
-        </button>
-      </form>
-      <div className="card">
-        {!isError && <p>
-          The optimal frequency for claiming rewards is&nbsp;
-          <span className="result">{optimalFrequency}</span>
-          &nbsp;and it will make me earn&nbsp;
-          <span className="result">${maxIncome}</span>
-          &nbsp;per year.<br/>&nbsp;
-          Without compounding, it will make me earn&nbsp;
-          <span className="result">${incomeWithoutCompound}</span>
-          &nbsp;per year. This represents a difference of&nbsp;
-          <span className="result">${difference}.</span>
-        </p>}
-        {isError &&
-          <p className="result">The numbers you passed doesn't seem realistic. Please, correct the information.</p>}
-      </div>
+      <SwitchForm isBasic={isBasic} setIsBasic={setIsBasic}/>
+      <Form onSubmit={onSubmit} isComputing={isComputing} isBasic={isBasic}/>
+      <Result isError={isError} optimalFrequency={optimalFrequency} maxIncome={maxIncome}
+              incomeWithoutCompound={incomeWithoutCompound} difference={difference}/>
     </div>);
 }
 

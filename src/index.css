@@ -4,14 +4,18 @@
 
 @layer components {
     .input {
-        @apply h-7 w-28 p-0.5 z-10 leading-normal
+        @apply h-7 w-20 p-0.5 z-10 leading-normal
         border border-amber-500 rounded-lg focus:ring-1 focus:ring-sky-500 focus:border-sky-500 focus:outline-none
         bg-gray-100
         dark:bg-gray-900;
     }
 
+    .input-sm {
+        @apply w-10
+    }
+
     .result {
-        @apply inline-block border-b-2 border-b-pink-500 h-10 font-bold
+        @apply inline-block border-b-2 border-b-pink-500 h-8 font-bold
         dark:font-medium;
     }
 
@@ -24,10 +28,6 @@
         rounded-lg px-5 py-2.5 m-5
     }
 
-    .error-message {
-        @apply text-red-500 text-sm absolute pt-7
-    }
-
     .body {
         @apply mx-5 mt-3 lg:mx-10 lg:mt-5 flex justify-center font-sans-serif
         bg-gray-100 text-gray-800
@@ -35,9 +35,25 @@
     }
 
     .card {
-        @apply text-center leading-extra-loose text-lg rounded-xl shadow-lg p-3 lg:p-6
+        @apply text-center leading-loose text-lg rounded-xl shadow-lg p-3 lg:p-6
         bg-white
         dark:bg-gray-800
+    }
+
+    .switch-form-basic-label-selected {
+        @apply border-b-2 border-b-pink-500
+    }
+
+    .switch-form-advanced-label-selected {
+        @apply border-b-2 border-b-sky-500
+    }
+
+    .switch-input:checked + .slider {
+        @apply bg-sky-500
+    }
+
+    .slider {
+        @apply bg-pink-500
     }
 }
 
@@ -55,4 +71,55 @@ input[type=number] {
 
 body {
     min-height: calc(100vh - theme('margin.5'));
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 22px;
+}
+
+.switch .switch-input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.switch-input:checked + .slider:before {
+    -webkit-transform: translateX(18px);
+    -ms-transform: translateX(18px);
+    transform: translateX(18px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 22px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
 }

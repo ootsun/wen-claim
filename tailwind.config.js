@@ -5,11 +5,6 @@ module.exports = {
   ],
   darkMode: 'media',
   theme: {
-    extend: {
-      lineHeight: {
-        'extra-loose': '2.8',
-      }
-    },
     fontFamily: {
       'cursive': ['Lobster'],
       'sans-serif': ['Lato']

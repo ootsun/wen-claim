@@ -1,54 +1,55 @@
 onmessage = function (e) {
-  postMessage(computeTheOptimalFrequency(e.data.amount, e.data.apr, e.data.cost))
+  postMessage(computeTheOptimalFrequency(e.data.amount, e.data.ppr, e.data.cost, e.data.timeHorizonInHours))
 };
 
-function computeTheOptimalFrequency(amount, apr, cost) {
-  // 8760 == number of hours in 1 year
-  const maxValue = 365 * 24;
-
+// (ppr = periodic percentage rate) =/= (apr = annual percentage rate)
+function computeTheOptimalFrequency(amount, ppr, cost, timeHorizonInHours) {
   // Don't waste time computing something unrealistic
-  const maxResultLimit = 1000000000;
-  const maxNbComputations = 10000000;
-
+  const MAX_NB_COMPUTATIONS = 10000000;
+  const MAX_RESULT_LIMIT = 1000000000;
   // Define the two starting point
-  let a = maxValue / 4;
+  let a = Math.ceil(timeHorizonInHours / 4);
   let b = a * 3;
 
-  // This function returns the value of a position (amount + yearly earnings) after 1 year
-  // where x is the yearly frequency of harvests
-  const fx = (x) => amount * (Math.pow(1 + apr / x, x) - 1) - (x * cost);
+  // This function returns the value of a position (amount + periodic earnings) after 1 period
+  // where x is the periodic frequency of harvests
+  const fx = (x) => amount * (Math.pow(1 + ppr / x, x) - 1) - (x * cost);
 
-  let maxResult;
+  let prevMaxResult;
   let newMaxResult = 0;
-  let maxFrequency;
-  let step = 1;
+  let prevMaxFrequency;
+  let newMaxFrequency;
   let nbComputations = 0;
 
   do {
     nbComputations++;
-    maxResult = newMaxResult;
+    prevMaxResult = newMaxResult;
+    prevMaxFrequency = newMaxFrequency;
 
     let fxa = fx(a);
     newMaxResult = Math.max(fxa, fx(b));
 
-    maxFrequency = fxa === newMaxResult ? a : b;
+    newMaxFrequency = fxa === newMaxResult ? a : b;
 
-    a = maxFrequency - step >= 0 ? maxFrequency - step : 0;
-    b = maxFrequency + step <= maxValue ? maxFrequency + step : maxValue;
+    a = newMaxFrequency - 1 >= 0 ? newMaxFrequency - 1 : 0;
+    b = newMaxFrequency + 1 <= timeHorizonInHours ? newMaxFrequency + 1 : timeHorizonInHours;
 
-    if((a === 0 || nbComputations === 100) && step === 1) {
-      step /= 100;
-      a = maxFrequency - step >= 0 ? maxFrequency - step : 0;
-      b = maxFrequency + step <= maxValue ? maxFrequency + step : maxValue;
-    }
+  } while ((newMaxResult <= 0 || getPreciseRound(prevMaxResult) < getPreciseRound(newMaxResult)) && nbComputations < MAX_NB_COMPUTATIONS);
 
-  } while ((newMaxResult <= 0 || getPreciseRound(maxResult) < getPreciseRound(newMaxResult)) && nbComputations < maxNbComputations);
-
-  if (newMaxResult >= maxResultLimit) {
-    newMaxResult = maxResultLimit;
+  let finalMaxResult;
+  let finalMaxFrequency;
+  if(newMaxResult > prevMaxResult) {
+    finalMaxResult = newMaxResult;
+    finalMaxFrequency = newMaxFrequency;
+  } else {
+    finalMaxResult = prevMaxResult;
+    finalMaxFrequency = prevMaxFrequency;
   }
-  // console.log('a = ' + a, 'b = ' + b, 'maxFrequency = ' + maxFrequency, 'maxResult = ' + maxResult, 'newMaxResult = ' + newMaxResult, 'nbComputations = ' + nbComputations);
-  return {maxIncome: newMaxResult, optimalFrequency: maxFrequency};
+  if (finalMaxResult >= MAX_RESULT_LIMIT) {
+    finalMaxResult = MAX_RESULT_LIMIT;
+  }
+  // console.log('a = ' + a, 'b = ' + b, 'newMaxFrequency = ' + newMaxFrequency, 'finalMaxFrequency = ' + finalMaxFrequency, 'prevMaxResult = ' + prevMaxResult, 'newMaxResult = ' + newMaxResult, 'finalMaxResult = ' + finalMaxResult, 'nbComputations = ' + nbComputations);
+  return {maxIncome: finalMaxResult, optimalFrequency: finalMaxFrequency};
 }
 
 function getPreciseRound(maxResult) {

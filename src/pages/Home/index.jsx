@@ -102,11 +102,12 @@ function Home() {
       return 'shit ton of 💰💰💰';
     }
     const result = Math.round(number * 100) / 100;
-    const rest = Math.round((result % 1) * 100) / 100
-    if(rest < 1 && rest >= 0.1) {
+    const resultString = result + '';
+    const tokens = resultString.split('.');
+    if(tokens.length === 2 && tokens[1].length === 1) {
       return formatThousands(result) + '0';
     }
-    return formatThousands(result)
+    return formatThousands(result);
   }
 
   function translateInEnglish(period, frequency) {

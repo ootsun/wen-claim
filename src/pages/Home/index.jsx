@@ -11,7 +11,7 @@ function Home() {
   const MAX_RESULT_LIMIT = 1000000000;
   let [isComputing, setIsComputing] = useState(false);
   let [optimalFrequency, setOptimalFrequency] = useState(translateInEnglish(HOURS_IN_YEAR, 17));
-  let [maxIncome, setMaxIncome] = useState(3429.32);
+  let [maxIncome, setMaxIncome] = useState('3 429.32');
   let [incomeWithoutCompound, setIncomeWithoutCompound] = useState(null);
   let [difference, setDifference] = useState(null);
   let [isError, setIsError] = useState(false);
@@ -56,7 +56,7 @@ function Home() {
           if (userDoesntLoseMoney(maxIncomeAfterClaim, incomeWithoutCompound)) {
             if (userEarnMoreWithoutCompound(incomeWithoutCompound, maxIncomeAfterClaim, formData.claimCost)) {
               //If user shouldn't compound
-              setMaxIncome(controlAndRound(event.data.maxIncome));
+              setMaxIncome(controlAndRound(incomeWithoutCompound));
             } else {
               setMaxIncome(controlAndRound(maxIncomeAfterClaim));
               setOptimalFrequency(translateInEnglish(timeHorizonInHours, event.data.optimalFrequency));
@@ -101,7 +101,7 @@ function Home() {
     if (number >= MAX_RESULT_LIMIT) {
       return 'shit ton of 💰💰💰';
     }
-    const result = Math.round(number * 100) / 100;
+    const result = number < 10 ? number : Math.round(number * 100) / 100;
     const resultString = result + '';
     const tokens = resultString.split('.');
     if(tokens.length === 2 && tokens[1].length === 1) {

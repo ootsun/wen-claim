@@ -12,7 +12,7 @@ export function Form({onSubmit, isComputing, isBasic}) {
         <p>
           I depose $
           <span className="inline-flex">
-            <input type="number" className="input" step={0.01} {...register('amount')} defaultValue={10000}/>
+            <input type="number" className="input" step={0.000000000000001} {...register('amount')} defaultValue={10000}/>
           </span>
           {!isBasic && <span>
             &nbsp;for a period of&nbsp;
@@ -37,18 +37,18 @@ export function Form({onSubmit, isComputing, isBasic}) {
         {isBasic && <p>
           Claim and compound rewards cost me $
           <span className="inline-flex">
-            <input type="number" className="input" step={0.01} {...register('cost')} defaultValue={2}/>
+            <input type="number" className="input" step={0.000000000000001} {...register('cost')} defaultValue={2}/>
           </span>.
         </p>
         }
         {!isBasic && <p>
           Claim rewards cost me $
           <span className="inline-flex">
-            <input type="number" className="input" step={0.01} {...register('claimCost')} defaultValue={0.5}/>
+            <input type="number" className="input" step={0.000000000000001} {...register('claimCost')} defaultValue={0.5}/>
           </span>
           &nbsp;and compound them cost me $
           <span className="inline-flex">
-            <input type="number" className="input" step={0.01} {...register('compoundCost')} defaultValue={1.5}/>
+            <input type="number" className="input" step={0.000000000000001} {...register('compoundCost')} defaultValue={1.5}/>
           </span>.
         </p>
         }

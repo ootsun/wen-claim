@@ -53,6 +53,6 @@ function computeTheOptimalFrequency(amount, ppr, cost, timeHorizonInHours) {
 }
 
 function getPreciseRound(maxResult) {
-  const preciseRound = Math.round(maxResult * 10000);
+  const preciseRound = Math.round(maxResult * 10000000000);
   return preciseRound <= Number.MAX_SAFE_INTEGER ? preciseRound : Number.MAX_SAFE_INTEGER;
 }

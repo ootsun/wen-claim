@@ -20,7 +20,7 @@ export default class MyDocument extends NextDocument {
         </Head>
 
         <body className="body">
-        <Main className="flex flex-col justify-between"/>
+        <Main/>
         <NextScript/>
         </body>
       </Html>

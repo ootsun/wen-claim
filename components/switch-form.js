@@ -1,4 +1,4 @@
-export function SwitchForm({isBasic, setIsBasic}) {
+export default function SwitchForm({isBasic, setIsBasic}) {
 
   function toggleLabelUnderline($event){
     setIsBasic(!$event.target.checked)

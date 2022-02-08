@@ -11,8 +11,10 @@ Pull requests are welcome !
 [wenclaim.xyz](https://wenclaim.xyz)
 
 ### Keywords :
-- React
+- Next.js
 - Tailwind
 - Web workers API
+- Mongoose
+- MongoDB
 
 

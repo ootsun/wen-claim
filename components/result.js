@@ -1,4 +1,4 @@
-export function Result({isError, isBasic, optimalFrequency, maxIncome, incomeWithoutCompound, difference}) {
+export default function Result({isError, isBasic, optimalFrequency, maxIncome, incomeWithoutCompound, difference}) {
   let result = [];
   if (!isError) {
     if (maxIncome !== null) {

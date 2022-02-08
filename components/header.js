@@ -1,4 +1,4 @@
-function Header() {
+export default function Header() {
   return (
     <header className="h-16 flex items-center justify-center">
       <h1 className="text-center text-4xl font-cursive">
@@ -10,5 +10,3 @@ function Header() {
     </header>
   );
 }
-
-export default Header;

@@ -1,10 +1,11 @@
 import {useState} from 'react';
 import humanizeDuration from 'humanize-duration';
 import {v4 as uuidv4} from 'uuid';
-import {SwitchForm} from '../../components/SwitchForm';
-import {Form} from '../../components/Form';
-import {Result} from '../../components/Result';
+import SwitchForm from '../components/switch-form.js';
+import Form from '../components/form.js';
+import Result from '../components/result.js';
 import formatThousands from 'format-thousands';
+import Head from 'next/head';
 
 function Home() {
   const HOURS_IN_YEAR = 365 * 24;
@@ -89,7 +90,7 @@ function Home() {
     if (prevMetric && prevMetric.amount === amount && prevMetric.apr === apr && prevMetric.cost === cost) {
       return;
     }
-    fetch(process.env.REACT_APP_METRIC_API_URL, {
+    fetch("/api/metrics", {
       method: 'POST',
       body: JSON.stringify({sessionId, amount, apr, cost}),
       headers: {'Content-type': 'application/json; charset=UTF-8'}
@@ -128,7 +129,10 @@ function Home() {
   }
 
   return (
-    <div className="flex items-center flex-col mt-5">
+    <div className="flex items-center flex-col">
+      <Head>
+        <title>Wen claim ??!</title>
+      </Head>
       <SwitchForm isBasic={isBasic} setIsBasic={setIsBasic}/>
       <Form onSubmit={onSubmit} isComputing={isComputing} isBasic={isBasic}/>
       <Result isError={isError} optimalFrequency={optimalFrequency} maxIncome={maxIncome}

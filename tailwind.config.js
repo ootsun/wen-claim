@@ -1,7 +1,7 @@
 module.exports = {
   content: [
-    './public/index.html',
-    './src/**/*.{js,jsx,ts,tsx}',
+    './pages/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,ts,jsx,tsx}',
   ],
   darkMode: 'media',
   theme: {
@@ -10,5 +10,5 @@ module.exports = {
       'sans-serif': ['Lato']
     }
   },
-  plugins: [],
+  plugins: []
 }

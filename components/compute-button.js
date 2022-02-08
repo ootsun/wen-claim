@@ -1,4 +1,4 @@
-export function ComputeButton({isValid, isComputing}) {
+export default function ComputeButton({isValid, isComputing}) {
 
   return (
     <button type="submit" disabled={!isValid || isComputing} className="compute-button">

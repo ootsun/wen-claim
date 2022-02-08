@@ -29,7 +29,7 @@
     }
 
     .body {
-        @apply mx-5 mt-3 lg:mx-10 lg:mt-5 flex justify-center font-sans-serif
+        @apply px-5 lg:px-10 font-sans-serif
         bg-gray-100 text-gray-800
         dark:bg-gray-900 dark:text-gray-100
     }
@@ -67,10 +67,6 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
     -moz-appearance: textfield;
-}
-
-body {
-    min-height: calc(100vh - theme('margin.5'));
 }
 
 .switch {

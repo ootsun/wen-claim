@@ -1,7 +1,7 @@
 import {useForm} from 'react-hook-form';
-import {ComputeButton} from '../ComputeButton/index.jsx';
+import ComputeButton from './compute-button.js';
 
-export function Form({onSubmit, isComputing, isBasic}) {
+export default function Form({onSubmit, isComputing, isBasic}) {
 
   const {register, handleSubmit, formState} = useForm();
   let {isValid} = formState;

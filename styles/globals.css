@@ -34,26 +34,17 @@
         dark:bg-gray-900 dark:text-gray-100
     }
 
-    .card {
-        @apply text-center leading-loose text-lg rounded-xl shadow-lg p-3 lg:p-6
+    .select-options {
+        @apply p-0.5 leading-loose text-lg m-5 h-10
+        border border-amber-500 rounded-lg focus:ring-1 focus:ring-sky-500 focus:border-sky-500 focus:outline-none
         bg-white
         dark:bg-gray-800
     }
 
-    .switch-form-basic-label-selected {
-        @apply border-b-2 border-b-pink-500
-    }
-
-    .switch-form-advanced-label-selected {
-        @apply border-b-2 border-b-sky-500
-    }
-
-    .switch-input:checked + .slider {
-        @apply bg-sky-500
-    }
-
-    .slider {
-        @apply bg-pink-500
+    .card {
+        @apply text-center leading-loose text-lg rounded-xl shadow-lg p-3 lg:p-6
+        bg-white
+        dark:bg-gray-800
     }
 }
 
